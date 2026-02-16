@@ -105,6 +105,7 @@ ehthumbs.db
 Thumbs.db
 .idea/
 .vscode/
+.claude/
 *.sublime-project
 *.sublime-workspace
 *.tmp
