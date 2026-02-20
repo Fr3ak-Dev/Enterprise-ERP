@@ -63,8 +63,6 @@ type Product {
 
 type InventoryMovement {
     id: ID!
-    product: Product! @belongsTo
-    user: User! @belongsTo
     type: String!          # entrada o salida
     quantity: Int!
     unit_price: Float
@@ -223,8 +221,8 @@ type Query {
         active: Boolean @eq
     ): [Product!]! @paginate(defaultCount: 15)
     
-    # Productos con stock bajo
-    productsLowStock: [Product!]!
+    # Productos con stock bajo (usa clase personalizada)
+    productsLowStock: [Product!]! @field(resolver: "App\\GraphQL\\Queries\\ProductsLowStock")
     
     # Clientes
     customer(id: ID! @eq): Customer @find
@@ -282,8 +280,8 @@ type Query {
         status: String @eq
     ): [Order!]! @paginate
     
-    # Dashboard
-    dashboardStats: DashboardStats!
+    # Dashboard (usa clase personalizada)
+    dashboardStats: DashboardStats! @field(resolver: "App\\GraphQL\\Queries\\DashboardStats")
 }
 
 # ===== MUTATIONS (POST, PUT, DELETE) =====
