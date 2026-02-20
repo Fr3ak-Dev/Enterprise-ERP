@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -61,19 +62,40 @@ class Product extends Model
     /**
      * Verificar si el stock está bajo
      */
-    public function isLowStock()
+    // public function isLowStock()
+    // {
+    //     return $this->stock <= $this->min_stock;
+    // }
+
+    // Accesor para GraphQL
+    protected function isLowStock(): Attribute
     {
-        return $this->stock <= $this->min_stock;
+        return Attribute::make(
+            get: fn() => $this->stock <= $this->min_stock,
+        );
     }
 
     /**
      * Calcular margen de ganancia
      */
-    public function profitMargin()
+    // public function profitMargin()
+    // {
+    //     if ($this->purchase_price == 0) {
+    //         return 0;
+    //     }
+    //     return (($this->sale_price - $this->purchase_price) / $this->purchase_price) * 100;
+    // }
+
+    // Accesor para GraphQL
+    protected function profitMargin(): Attribute
     {
-        if ($this->purchase_price == 0) {
-            return 0;
-        }
-        return (($this->sale_price - $this->purchase_price) / $this->purchase_price) * 100;
+        return Attribute::make(
+            get: function () {
+                if ($this->purchase_price == 0) {
+                    return 0.0;
+                }
+                return (($this->sale_price - $this->purchase_price) / $this->purchase_price) * 100;
+            }
+        );
     }
 }

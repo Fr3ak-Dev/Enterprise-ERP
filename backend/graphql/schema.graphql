@@ -56,7 +56,7 @@ type Product {
     active: Boolean!
     category: Category! @belongsTo
     supplier: Supplier @belongsTo
-    inventory_movements: [InventoryMovement!]! @hasMany
+    inventory_movements: [InventoryMovement!]! @hasMany(relation: "inventoryMovements")
     created_at: DateTime!
     updated_at: DateTime!
 }

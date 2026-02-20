@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -57,8 +58,23 @@ class Customer extends Model
     /**
      * Verificar si el cliente tiene deuda
      */
-    public function hasDebt()
+    // public function hasDebt()
+    // {
+    //     return $this->current_balance < 0;
+    // }
+
+    // Accesor para GraphQL
+    protected function availableCredit(): Attribute
     {
-        return $this->current_balance < 0;
+        return Attribute::make(
+            get: fn() => $this->credit_limit - $this->current_balance,
+        );
+    }
+
+    protected function hasDebt(): Attribute
+    {
+        return Attribute::make(
+            get: fn() => $this->current_balance < 0,
+        );
     }
 }
