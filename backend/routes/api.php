@@ -12,6 +12,7 @@ use App\Http\Controllers\AccountController;
 use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\TransactionTypeController;
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\ReportController;
 
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
@@ -31,4 +32,9 @@ Route::middleware('auth:api')->group(function () {
     Route::apiResource('accounts', AccountController::class);
     Route::apiResource('transaction-types', TransactionTypeController::class);
     Route::apiResource('orders', OrderController::class);
+    Route::prefix('reports')->group(function () {
+        Route::get('/products-pdf', [ReportController::class, 'productsPdf']);
+        Route::get('/products-pdf-preview', [ReportController::class, 'productsPdfPreview']);
+        Route::get('/transactions-excel', [ReportController::class, 'transactionsExcel']);
+    });
 });
