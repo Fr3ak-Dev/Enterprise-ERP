@@ -32,6 +32,7 @@ Route::middleware('auth:api')->group(function () {
     Route::apiResource('accounts', AccountController::class);
     Route::apiResource('transaction-types', TransactionTypeController::class);
     Route::apiResource('orders', OrderController::class);
+    Route::apiResource('transactions', TransactionController::class);
     Route::prefix('reports')->group(function () {
         Route::get('/products-pdf', [ReportController::class, 'productsPdf']);
         Route::get('/products-pdf-preview', [ReportController::class, 'productsPdfPreview']);
