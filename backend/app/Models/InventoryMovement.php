@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -45,8 +46,14 @@ class InventoryMovement extends Model
     /**
      * Calcular el valor total del movimiento
      */
-    public function totalValue()
+    // public function totalValue()
+    // {
+    //     return $this->quantity * ($this->unit_price ?? 0);
+    // }
+    protected function totalValue(): Attribute
     {
-        return $this->quantity * ($this->unit_price ?? 0);
+        return Attribute::make(
+            get: fn() => $this->quantity * ($this->unit_price ?? 0),
+        );
     }
 }

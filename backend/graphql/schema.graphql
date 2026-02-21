@@ -1,0 +1,354 @@
+# ===== ESCALAR TYPES =====
+scalar DateTime @scalar(class: "Nuwave\\Lighthouse\\Schema\\Types\\Scalars\\DateTime")
+
+scalar Date @scalar(class: "Nuwave\\Lighthouse\\Schema\\Types\\Scalars\\Date")
+
+# ===== TYPES =====
+type User {
+    id: ID!
+    name: String!
+    email: String!
+    created_at: DateTime!
+    updated_at: DateTime!
+}
+
+type Category {
+    id: ID!
+    name: String!
+    description: String
+    active: Boolean!
+    products: [Product!]! @hasMany
+    products_count: Int! @count(relation: "products")
+    created_at: DateTime!
+    updated_at: DateTime!
+}
+
+type Supplier {
+    id: ID!
+    name: String!
+    email: String
+    phone: String
+    address: String
+    city: String
+    country: String!
+    tax_id: String
+    notes: String
+    active: Boolean!
+    products: [Product!]! @hasMany
+    products_count: Int! @count(relation: "products")
+    created_at: DateTime!
+    updated_at: DateTime!
+}
+
+type Product {
+    id: ID!
+    code: String!
+    name: String!
+    description: String
+    purchase_price: Float!
+    sale_price: Float!
+    profit_margin: Float!   # Campo calculado en el modelo
+    stock: Int!
+    min_stock: Int!
+    is_low_stock: Boolean!  # Campo calculado
+    unit: String!
+    image: String
+    active: Boolean!
+    category: Category! @belongsTo
+    supplier: Supplier @belongsTo
+    inventory_movements: [InventoryMovement!]! @hasMany(relation: "inventoryMovements")
+    created_at: DateTime!
+    updated_at: DateTime!
+}
+
+type InventoryMovement {
+    id: ID!
+    type: String!          # entrada o salida
+    quantity: Int!
+    unit_price: Float
+    total_value: Float!    # Campo calculado
+    reference: String
+    notes: String
+    stock_after: Int!
+    product: Product! @belongsTo
+    user: User! @belongsTo
+    created_at: DateTime!
+}
+
+type CustomerType {
+    id: ID!
+    name: String!
+    description: String
+    discount_percentage: Float!
+    active: Boolean!
+    customers: [Customer!]! @hasMany
+    customers_count: Int! @count(relation: "customers")
+    created_at: DateTime!
+    updated_at: DateTime!
+}
+
+type Customer {
+    id: ID!
+    code: String!
+    name: String!
+    email: String
+    phone: String
+    address: String
+    city: String
+    country: String!
+    tax_id: String
+    credit_limit: Float!
+    current_balance: Float!
+    available_credit: Float!  # Campo calculado
+    has_debt: Boolean!        # Campo calculado
+    notes: String
+    active: Boolean!
+    customer_type: CustomerType! @belongsTo
+    transactions: [Transaction!]! @hasMany
+    orders: [Order!]! @hasMany
+    created_at: DateTime!
+    updated_at: DateTime!
+}
+
+type Account {
+    id: ID!
+    name: String!
+    account_number: String!
+    type: String!          # caja, banco, otro
+    balance: Float!
+    currency: String!
+    description: String
+    active: Boolean!
+    transactions: [Transaction!]! @hasMany
+    transactions_count: Int! @count(relation: "transactions")
+    created_at: DateTime!
+    updated_at: DateTime!
+}
+
+type TransactionType {
+    id: ID!
+    name: String!
+    category: String!      # ingreso o egreso
+    description: String
+    active: Boolean!
+    transactions: [Transaction!]! @hasMany
+    transactions_count: Int! @count(relation: "transactions")
+    created_at: DateTime!
+    updated_at: DateTime!
+}
+
+type Transaction {
+    id: ID!
+    amount: Float!
+    transaction_date: Date!
+    reference: String
+    description: String
+    status: String!        # completada, pendiente, cancelada
+    account: Account! @belongsTo
+    transaction_type: TransactionType! @belongsTo
+    customer: Customer @belongsTo
+    user: User! @belongsTo
+    created_at: DateTime!
+    updated_at: DateTime!
+}
+
+type Order {
+    id: ID!
+    order_number: String!
+    order_date: Date!
+    type: String!          # venta o compra
+    subtotal: Float!
+    discount: Float!
+    tax: Float!
+    total: Float!
+    status: String!        # pendiente, procesando, completada, cancelada
+    notes: String
+    items_count: Int! @count(relation: "items")
+    customer: Customer! @belongsTo
+    user: User! @belongsTo
+    items: [OrderItem!]! @hasMany
+    created_at: DateTime!
+    updated_at: DateTime!
+}
+
+type OrderItem {
+    id: ID!
+    quantity: Int!
+    unit_price: Float!
+    discount: Float!
+    subtotal: Float!
+    order: Order! @belongsTo
+    product: Product! @belongsTo
+}
+
+type DashboardStats {
+    total_products: Int!
+    total_customers: Int!
+    total_orders: Int!
+    low_stock_products: Int!
+    total_revenue: Float!
+    total_expenses: Float!
+    net_profit: Float!
+}
+
+# ===== QUERIES GET =====
+type Query {
+    # Usuarios autenticados (Requiere token JWT en el header)
+    me: User @auth
+    
+    # Categorías
+    category(id: ID! @eq): Category @find
+    categories(
+        first: Int = 15
+        page: Int
+        active: Boolean @eq
+    ): [Category!]! @paginate
+    
+    # Proveedores
+    supplier(id: ID! @eq): Supplier @find
+    suppliers(
+        first: Int = 15
+        page: Int
+        active: Boolean @eq
+    ): [Supplier!]! @paginate
+    
+    # Productos
+    product(id: ID! @eq): Product @find
+    products(
+        first: Int = 15
+        page: Int
+        category_id: ID @eq
+        active: Boolean @eq
+    ): [Product!]! @paginate(defaultCount: 15)
+    
+    # Productos con stock bajo (usa clase personalizada)
+    productsLowStock: [Product!]! @field(resolver: "App\\GraphQL\\Queries\\ProductsLowStock")
+    
+    # Clientes
+    customer(id: ID! @eq): Customer @find
+    customers(
+        first: Int = 15
+        page: Int
+        customer_type_id: ID @eq
+        active: Boolean @eq
+    ): [Customer!]! @paginate
+    
+    # Tipos de clientes
+    customerType(id: ID! @eq): CustomerType @find
+    
+    customerTypes(
+        first: Int = 15
+        page: Int
+        active: Boolean @eq
+    ): [CustomerType!]! @paginate
+    
+    # Cuentas
+    account(id: ID! @eq): Account @find
+    accounts(
+        first: Int = 15
+        page: Int
+        type: String @eq
+        active: Boolean @eq
+    ): [Account!]! @paginate
+    
+    # Tipos de transacción
+    transactionType(id: ID! @eq): TransactionType @find
+    transactionTypes(
+        first: Int = 15
+        page: Int
+        category: String @eq
+        active: Boolean @eq
+    ): [TransactionType!]! @paginate
+    
+    # Transacciones
+    transaction(id: ID! @eq): Transaction @find
+    transactions(
+        first: Int = 15
+        page: Int
+        account_id: ID @eq
+        customer_id: ID @eq
+        status: String @eq
+    ): [Transaction!]! @paginate
+    
+    # Órdenes
+    order(id: ID! @eq): Order @find
+    orders(
+        first: Int = 15
+        page: Int
+        customer_id: ID @eq
+        type: String @eq
+        status: String @eq
+    ): [Order!]! @paginate
+    
+    # Dashboard (usa clase personalizada)
+    dashboardStats: DashboardStats! @field(resolver: "App\\GraphQL\\Queries\\DashboardStats")
+}
+
+# ===== MUTATIONS (POST, PUT, DELETE) =====
+type Mutation {
+    # Productos
+    createProduct(
+        code: String!
+        name: String!
+        description: String
+        category_id: ID!
+        supplier_id: ID
+        purchase_price: Float!
+        sale_price: Float!
+        stock: Int!
+        min_stock: Int!
+        unit: String!
+        active: Boolean
+    ): Product! @create
+    
+    updateProduct(
+        id: ID!
+        code: String
+        name: String
+        description: String
+        category_id: ID
+        supplier_id: ID
+        purchase_price: Float
+        sale_price: Float
+        stock: Int
+        min_stock: Int
+        unit: String
+        active: Boolean
+    ): Product! @update
+    
+    deleteProduct(id: ID!): Product @delete
+    
+    # Clientes
+    createCustomer(
+        code: String!
+        name: String!
+        email: String
+        phone: String
+        customer_type_id: ID!
+        address: String
+        city: String
+        country: String
+        tax_id: String
+        credit_limit: Float!
+        notes: String
+        active: Boolean
+    ): Customer! @create
+    
+    updateCustomer(
+        id: ID!
+        code: String
+        name: String
+        email: String
+        phone: String
+        customer_type_id: ID
+        address: String
+        city: String
+        country: String
+        tax_id: String
+        credit_limit: Float
+        notes: String
+        active: Boolean
+    ): Customer! @update
+    
+    deleteCustomer(id: ID!): Customer @delete
+}
