@@ -12,7 +12,7 @@ const productSchema = z.object({
     code: z.string().min(3, 'Mínimo 3 caracteres').max(50, 'Máximo 50 caracteres'),
     name: z.string().min(3, 'Mínimo 3 caracteres').max(255, 'Máximo 255 caracteres'),
     description: z.string().optional(),
-    category_id: z.number().positive('Selecciona una categoría'),
+    category_id: z.number().positive('Este campo es obligatorio'),
     supplier_id: z.number().optional().nullable(),
     purchase_price: z.number().min(0, 'Debe ser mayor o igual a 0'),
     sale_price: z.number().min(0, 'Debe ser mayor o igual a 0'),
@@ -58,7 +58,8 @@ const ProductForm = ({ product, onSuccess, onCancel }: ProductFormProps) => {
             code: '',
             name: '',
             description: '',
-            category_id: 0,
+            category_id: undefined,
+            supplier_id: undefined,
             purchase_price: 0,
             sale_price: 0,
             stock: 0,
@@ -145,7 +146,13 @@ const ProductForm = ({ product, onSuccess, onCancel }: ProductFormProps) => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                     <label htmlFor="category_id" className="block text-sm font-medium text-gray-700 mb-2">Categoría <span className="text-red-500">*</span></label>
-                    <select id="category_id" {...register('category_id', { valueAsNumber: true })} className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 ${errors.category_id ? 'border-red-500' : 'border-gray-300'}`}>
+                    <select
+                        id="category_id"
+                        {...register('category_id', {
+                            setValueAs: (v) => v === '' || v === undefined ? 0 : Number(v)
+                        })}
+                        className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 ${errors.category_id ? 'border-red-500' : 'border-gray-300'}`}
+                    >
                         <option value="">Seleccionar categoría</option>
                         {categories.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
                     </select>
@@ -154,7 +161,13 @@ const ProductForm = ({ product, onSuccess, onCancel }: ProductFormProps) => {
 
                 <div>
                     <label htmlFor="supplier_id" className="block text-sm font-medium text-gray-700 mb-2">Proveedor</label>
-                    <select id="supplier_id" {...register('supplier_id', { setValueAs: (v) => v === '' ? undefined : Number(v) })} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500">
+                    <select
+                        id="supplier_id"
+                        {...register('supplier_id', {
+                            setValueAs: (v) => v === '' ? undefined : Number(v)
+                        })}
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                    >
                         <option value="">Sin proveedor</option>
                         {suppliers.map((s) => <option key={s.id} value={s.id}>{s.name}</option>)}
                     </select>
@@ -162,13 +175,51 @@ const ProductForm = ({ product, onSuccess, onCancel }: ProductFormProps) => {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <Input label="Precio de Compra" type="number" step="0.01" {...register('purchase_price', { valueAsNumber: true })} error={errors.purchase_price?.message} placeholder="0.00" required />
-                <Input label="Precio de Venta" type="number" step="0.01" {...register('sale_price', { valueAsNumber: true })} error={errors.sale_price?.message} placeholder="0.00" required />
+                <Input
+                    label="Precio de Compra"
+                    type="number"
+                    step="0.01"
+                    {...register('purchase_price', {
+                        setValueAs: (v) => v === '' ? 0 : Number(v)
+                    })}
+                    error={errors.purchase_price?.message}
+                    placeholder="0.00"
+                    required
+                />
+                <Input
+                    label="Precio de Venta"
+                    type="number"
+                    step="0.01"
+                    {...register('sale_price', {
+                        setValueAs: (v) => v === '' ? 0 : Number(v)
+                    })}
+                    error={errors.sale_price?.message}
+                    placeholder="0.00"
+                    required
+                />
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <Input label="Stock" type="number" {...register('stock', { valueAsNumber: true })} error={errors.stock?.message} placeholder="0" required />
-                <Input label="Stock Mínimo" type="number" {...register('min_stock', { valueAsNumber: true })} error={errors.min_stock?.message} placeholder="0" required />
+                <Input
+                    label="Stock"
+                    type="number"
+                    {...register('stock', {
+                        setValueAs: (v) => v === '' ? 0 : Number(v)
+                    })}
+                    error={errors.stock?.message}
+                    placeholder="0"
+                    required
+                />
+                <Input
+                    label="Stock Mínimo"
+                    type="number"
+                    {...register('min_stock', {
+                        setValueAs: (v) => v === '' ? 0 : Number(v)
+                    })}
+                    error={errors.min_stock?.message}
+                    placeholder="0"
+                    required
+                />
                 <Input label="Unidad" {...register('unit')} error={errors.unit?.message} placeholder="unidad, kg, litro" required />
             </div>
 
