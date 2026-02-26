@@ -64,7 +64,11 @@ const Products = () => {
         try {
             await productService.delete(product.id);
             alert('Producto eliminado exitosamente');
-            loadProducts();
+            if (products.length === 1 && currentPage > 1) {
+                setCurrentPage(1); // el useEffect recarga automáticamente
+            } else {
+                loadProducts();
+            }
         } catch (error: any) {
             console.error('Error al eliminar:', error);
             alert(error.response?.data?.message || 'Error al eliminar el producto');
