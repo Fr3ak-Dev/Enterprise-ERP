@@ -33,6 +33,11 @@ class Product extends Model
         'active' => 'boolean',
     ];
 
+    protected $appends = [
+        'is_low_stock',
+        'profit_margin',
+    ];
+
     public function category()
     {
         return $this->belongsTo(Category::class);
