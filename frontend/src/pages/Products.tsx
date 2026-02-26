@@ -31,13 +31,16 @@ const Products = () => {
 
     useEffect(() => {
         loadProducts();
-    }, [currentPage, search]);
+    }, [currentPage]);
 
     // Debounce para búsqueda
     useEffect(() => {
         const timer = setTimeout(() => {
-            setCurrentPage(1); // Reset a página 1 al buscar
-            loadProducts();
+            if (currentPage !== 1) {
+                setCurrentPage(1); // Esto triggereará el useEffect de arriba
+            } else {
+                loadProducts(); // Si ya está en página 1, cargar directamente
+            }
         }, 500);
 
         return () => clearTimeout(timer);
