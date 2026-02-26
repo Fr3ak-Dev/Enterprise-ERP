@@ -4,6 +4,7 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import ProtectedRoute from './components/ProtectedRoute';
 import MainLayout from './layouts/MainLayout';
+import Products from './pages/Products';
 
 const Dashboard = () => {
   return (
@@ -31,7 +32,6 @@ const Dashboard = () => {
   );
 };
 
-const Products = () => <div><h1 className="text-3xl font-bold">Productos</h1></div>;
 const Customers = () => <div><h1 className="text-3xl font-bold">Clientes</h1></div>;
 const Orders = () => <div><h1 className="text-3xl font-bold">Órdenes</h1></div>;
 
