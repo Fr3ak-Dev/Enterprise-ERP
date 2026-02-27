@@ -1,47 +1,19 @@
 import { useState, useEffect } from 'react';
-import { Package, Users, ShoppingCart, AlertTriangle, TrendingUp, TrendingDown } from 'lucide-react';
+import { Package, Users, ShoppingCart, AlertTriangle, TrendingUp } from 'lucide-react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { PieChart, Pie, Cell, Tooltip as PieTooltip, Legend as PieLegend } from 'recharts';
 import StatCard from '../components/dashboard/StatCard';
-import { dashboardService } from '../services/dashboard.service';
 import type { DashboardStats, ProductLowStock } from '../types/dashboard.types';
+
+import { useQuery } from '@apollo/client';
+import { GET_LOW_STOCK_PRODUCTS } from '../graphql/queries/dashboard.queries';
 
 const Dashboard = () => {
     const [stats, setStats] = useState<DashboardStats | null>(null);
     const [lowStockProducts, setLowStockProducts] = useState<ProductLowStock[]>([]);
     const [isLoading, setIsLoading] = useState(true);
 
-    useEffect(() => {
-        loadDashboardData();
-    }, []);
-
-    const loadDashboardData = async () => {
-        try {
-            setIsLoading(true);
-
-            // Datos mock hasta crear los endpoints en el backend
-            const mockStats: DashboardStats = {
-                total_products: 160,
-                total_customers: 45,
-                total_orders: 230,
-                low_stock_products: 8,
-                total_inventory_value: 125000,
-            };
-
-            const mockLowStock: ProductLowStock[] = [
-                { id: 1, code: 'PROD-001', name: 'Fierro Corrugado 12mm', stock: 5, min_stock: 10 },
-                { id: 2, code: 'PROD-015', name: 'Cemento Portland', stock: 8, min_stock: 15 },
-                { id: 3, code: 'PROD-023', name: 'Arena Fina', stock: 12, min_stock: 20 },
-            ];
-
-            setStats(mockStats);
-            setLowStockProducts(mockLowStock);
-        } catch (error) {
-            console.error('Error al cargar dashboard:', error);
-        } finally {
-            setIsLoading(false);
-        }
-    };
+    const { data: lowStockData, loading: loadingLowStock, error: errorLowStock } = useQuery(GET_LOW_STOCK_PRODUCTS);
 
     // Datos mock para el gráfico de movimientos de inventario
     const inventoryChartData = [
@@ -63,7 +35,46 @@ const Dashboard = () => {
         { name: 'Otros', value: 130, color: '#8b5cf6' },
     ];
 
-    if (isLoading) {
+    useEffect(() => {
+        loadDashboardData();
+    }, []);
+
+    // Actualizar cuando lleguen los datos de GraphQL
+    useEffect(() => {
+        if (lowStockData?.productsLowStock) {
+            setLowStockProducts(lowStockData.productsLowStock);
+
+            if (stats) {
+                setStats({
+                    ...stats,
+                    low_stock_products: lowStockData.productsLowStock.length,
+                });
+            }
+        }
+    }, [lowStockData]);
+
+    const loadDashboardData = async () => {
+        try {
+            setIsLoading(true);
+
+            // Datos mock hasta crear los endpoints en el backend
+            const mockStats: DashboardStats = {
+                total_products: 160,
+                total_customers: 45,
+                total_orders: 230,
+                low_stock_products: 8,
+                total_inventory_value: 125000,
+            };
+
+            setStats(mockStats);
+        } catch (error) {
+            console.error('Error al cargar dashboard:', error);
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    if (isLoading && loadingLowStock) {
         return (
             <div className="flex items-center justify-center h-96">
                 <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
@@ -127,7 +138,17 @@ const Dashboard = () => {
                     <AlertTriangle className="w-5 h-5 text-red-500" />
                 </div>
 
-                {lowStockProducts.length === 0 ? (
+                {errorLowStock && (
+                    <div className="bg-red-50 text-red-600 p-4 rounded-lg mb-4">
+                        Error al cargar productos: {errorLowStock.message}
+                    </div>
+                )}
+
+                {loadingLowStock ? (
+                    <div className="flex justify-center py-8">
+                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-600"></div>
+                    </div>
+                ) : lowStockProducts.length === 0 ? (
                     <p className="text-gray-500 text-center py-8">
                         No hay productos con stock bajo
                     </p>
