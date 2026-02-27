@@ -5,32 +5,7 @@ import Register from './pages/Register';
 import ProtectedRoute from './components/ProtectedRoute';
 import MainLayout from './layouts/MainLayout';
 import Products from './pages/Products';
-
-const Dashboard = () => {
-  return (
-    <div>
-      <h1 className="text-3xl font-bold text-gray-800 mb-4">Dashboard</h1>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <div className="card">
-          <p className="text-sm text-gray-600">Total Productos</p>
-          <p className="text-3xl font-bold text-gray-800 mt-2">150</p>
-        </div>
-        <div className="card">
-          <p className="text-sm text-gray-600">Clientes</p>
-          <p className="text-3xl font-bold text-gray-800 mt-2">45</p>
-        </div>
-        <div className="card">
-          <p className="text-sm text-gray-600">Órdenes</p>
-          <p className="text-3xl font-bold text-gray-800 mt-2">230</p>
-        </div>
-        <div className="card">
-          <p className="text-sm text-gray-600">Stock Bajo</p>
-          <p className="text-3xl font-bold text-red-600 mt-2">8</p>
-        </div>
-      </div>
-    </div>
-  );
-};
+import Dashboard from './pages/Dashboard';
 
 const Customers = () => <div><h1 className="text-3xl font-bold">Clientes</h1></div>;
 const Orders = () => <div><h1 className="text-3xl font-bold">Órdenes</h1></div>;
