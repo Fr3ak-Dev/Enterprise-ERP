@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Package, Users, ShoppingCart, AlertTriangle, TrendingUp, TrendingDown } from 'lucide-react';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { PieChart, Pie, Cell, Tooltip as PieTooltip, Legend as PieLegend } from 'recharts';
 import StatCard from '../components/dashboard/StatCard';
 import { dashboardService } from '../services/dashboard.service';
 import type { DashboardStats, ProductLowStock } from '../types/dashboard.types';
@@ -40,6 +42,26 @@ const Dashboard = () => {
             setIsLoading(false);
         }
     };
+
+    // Datos mock para el gráfico de movimientos de inventario
+    const inventoryChartData = [
+        { date: '01/02', entradas: 45, salidas: 32, ajustes: 5 },
+        { date: '02/02', entradas: 52, salidas: 28, ajustes: 3 },
+        { date: '03/02', entradas: 38, salidas: 41, ajustes: 7 },
+        { date: '04/02', entradas: 61, salidas: 35, ajustes: 2 },
+        { date: '05/02', entradas: 49, salidas: 39, ajustes: 4 },
+        { date: '06/02', entradas: 55, salidas: 43, ajustes: 6 },
+        { date: '07/02', entradas: 47, salidas: 37, ajustes: 3 },
+    ];
+
+    // Datos mock para el gráfico de categorías
+    const categoryChartData = [
+        { name: 'Acero', value: 450, color: '#3b82f6' },
+        { name: 'Cemento', value: 280, color: '#10b981' },
+        { name: 'Madera', value: 190, color: '#f59e0b' },
+        { name: 'Herramientas', value: 150, color: '#ef4444' },
+        { name: 'Otros', value: 130, color: '#8b5cf6' },
+    ];
 
     if (isLoading) {
         return (
@@ -165,6 +187,75 @@ const Dashboard = () => {
                         </table>
                     </div>
                 )}
+            </div>
+
+            {/* Grid de Graficos */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                {/* Gráfico de Movimientos de Inventario */}
+                <div className="card">
+                    <h2 className="text-xl font-semibold text-gray-800 mb-4">
+                        Movimientos de Inventario (Últimos 7 días)
+                    </h2>
+
+                    <ResponsiveContainer width="100%" height={300}>
+                        <LineChart data={inventoryChartData}>
+                            <CartesianGrid strokeDasharray="3 3" />
+                            <XAxis dataKey="date" />
+                            <YAxis />
+                            <Tooltip />
+                            <Legend />
+                            <Line
+                                type="monotone"
+                                dataKey="entradas"
+                                stroke="#10b981"
+                                strokeWidth={2}
+                                name="Entradas"
+                            />
+                            <Line
+                                type="monotone"
+                                dataKey="salidas"
+                                stroke="#ef4444"
+                                strokeWidth={2}
+                                name="Salidas"
+                            />
+                            <Line
+                                type="monotone"
+                                dataKey="ajustes"
+                                stroke="#f59e0b"
+                                strokeWidth={2}
+                                name="Ajustes"
+                            />
+                        </LineChart>
+                    </ResponsiveContainer>
+                </div>
+
+                {/* Gráfico de Productos por Categoría */}
+                <div className="card">
+                    <h2 className="text-xl font-semibold text-gray-800 mb-4">
+                        Productos por Categoría
+                    </h2>
+
+                    <ResponsiveContainer width="100%" height={300}>
+                        <PieChart>
+                            <Pie
+                                data={categoryChartData}
+                                cx="50%"
+                                cy="50%"
+                                labelLine={false}
+                                label={({ name, percent }) => `${name}: ${percent ? (percent * 100).toFixed(0) : 0}%`}
+                                outerRadius={100}
+                                fill="#8884d8"
+                                dataKey="value"
+                            >
+                                {categoryChartData.map((entry, index) => (
+                                    <Cell key={`cell-${index}`} fill={entry.color} />
+                                ))}
+                            </Pie>
+                            <PieTooltip />
+                            <PieLegend />
+                        </PieChart>
+                    </ResponsiveContainer>
+                </div>
             </div>
 
             {/* Valor Total del Inventario */}
