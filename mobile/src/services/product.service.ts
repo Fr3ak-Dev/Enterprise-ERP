@@ -7,7 +7,7 @@ export const productService = {
         const response = await apiClient.get<PaginatedResponse<Product>>('/products', {
             params: {
                 page,
-                per_page: 20,
+                per_page: 5,
                 search,
             },
         });
