@@ -22,24 +22,27 @@ const LoginScreen = () => {
     /**
      * Validar formulario
      */
-    const validate = (): boolean => {
+    const validate = (emailValue?: string, passwordValue?: string): boolean => {
         let isValid = true;
         const newErrors = { email: '', password: '' };
 
+        const emailToValidate = emailValue !== undefined ? emailValue : email;
+        const passwordToValidate = passwordValue !== undefined ? passwordValue : password;
+
         // Validar email
-        if (!email) {
+        if (!emailToValidate) {
             newErrors.email = 'El email es requerido';
             isValid = false;
-        } else if (!/\S+@\S+\.\S+/.test(email)) {
+        } else if (!/\S+@\S+\.\S+/.test(emailToValidate)) {
             newErrors.email = 'Email inválido';
             isValid = false;
         }
 
         // Validar password
-        if (!password) {
+        if (!passwordToValidate) {
             newErrors.password = 'La contraseña es requerida';
             isValid = false;
-        } else if (password.length < 6) {
+        } else if (passwordToValidate.length < 6) {
             newErrors.password = 'Mínimo 6 caracteres';
             isValid = false;
         }
@@ -51,16 +54,19 @@ const LoginScreen = () => {
     /**
      * Manejar submit
      */
-    const handleLogin = async () => {
+    const handleLogin = async (emailValue?: string, passwordValue?: string) => {
         setErrors({ email: '', password: '' });
 
-        if (!validate()) {
+        if (!validate(emailValue, passwordValue)) {
             return;
         }
 
+        const emailToUse = emailValue !== undefined ? emailValue : email;
+        const passwordToUse = passwordValue !== undefined ? passwordValue : password;
+
         try {
             setIsLoading(true);
-            await login(email, password);   // Si el login es exitoso, AuthContext maneja la navegación automáticamente
+            await login(emailToUse, passwordToUse);   // Si el login es exitoso, AuthContext maneja la navegación automáticamente
         } catch (error: any) {
             Alert.alert(
                 'Error',
@@ -76,9 +82,11 @@ const LoginScreen = () => {
      * Login rápido para testing
      */
     const handleQuickLogin = async () => {
-        setEmail('admin@enterpriseerp.com');
-        setPassword('password');
-        setTimeout(handleLogin, 300);
+        const quickEmail = 'admin@enterpriseerp.com';
+        const quickPassword = 'password';
+        setEmail(quickEmail);
+        setPassword(quickPassword);
+        handleLogin(quickEmail, quickPassword);
     };
 
     return (
