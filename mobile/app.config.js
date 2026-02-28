@@ -32,7 +32,7 @@ export default {
         },
         extra: {
             apiUrl: process.env.EXPO_PUBLIC_API_URL || "http://192.168.1.100:8000/api",
-            apiTimeout: process.env.EXPO_PUBLIC_API_TIMEOUT || 10000,
+            apiTimeout: parseInt(process.env.EXPO_PUBLIC_API_TIMEOUT || "10000", 10),
             environment: process.env.EXPO_PUBLIC_ENV || "development",
         }
     }

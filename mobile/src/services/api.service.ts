@@ -7,8 +7,8 @@ import Constants from 'expo-constants';
  */
 
 const config = Constants.expoConfig?.extra || {};
-const API_URL = Constants.expoConfig?.extra?.apiUrl || 'http://localhost:8000/api';
-const API_TIMEOUT = Constants.expoConfig?.extra?.apiTimeout || 10000;
+const API_URL = config.apiUrl || 'http://localhost:8000/api';
+const API_TIMEOUT = config.apiTimeout || 10000;
 
 if (__DEV__) {
     console.log('🔧 API Configuration:');
