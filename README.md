@@ -1,8 +1,8 @@
 # 🏢 EnterpriseERP
 
-Sistema ERP moderno full-stack con backend Laravel, frontend React y app móvil React Native.
+Modern full-stack ERP system with Laravel backend, React frontend, and React Native mobile app.
 
-## 🚀 Stack Tecnológico
+## 🚀 Technology Stack
 
 ### Backend
 - Laravel 12
@@ -27,81 +27,57 @@ Sistema ERP moderno full-stack con backend Laravel, frontend React y app móvil 
 - React Navigation
 - AsyncStorage
 
-## 📚 Módulos Implementados
+## 📚 Implemented Modules
 
-#### 🔐 Autenticación
-- Login con validación
-- Registro de usuarios
-- JWT tokens (access + refresh)
-- Logout
-- Persistencia de sesión
-- Protected routes
+- Authentication
+- Dashboard
+- Products
 
-#### 📊 Dashboard
-- 4 KPI cards (productos, clientes, órdenes, stock bajo)
-- Gráfico de líneas (movimientos de inventario)
-- Gráfico circular (productos por categoría)
-- Tabla de productos con stock crítico
-- Datos en tiempo real via GraphQL
+## 🚀 Key Features
 
-#### 📦 Productos
-- CRUD completo (Create, Read, Update, Delete)
-- Lista con búsqueda (debounce 500ms)
-- Paginación (20 items por página)
-- Validaciones:
-  - Código único
-  - Precio de venta > precio de compra
-  - Stock >= 0
-- Relaciones:
-  - Categorías
-  - Proveedores
-- Campos calculados:
-  - Stock bajo (stock <= min_stock)
-  - Margen de ganancia
+### ✅ Authentication System
+- Login/Register with validation
+- JWT tokens with refresh
+- Session persistence
+- Route protection
 
-## 🚀 Características Principales
+### 📊 Interactive Dashboard
+- Real-time KPIs (products, customers, orders, low stock)
+- Charts with Recharts (line and pie)
+- Products with critical stock (GraphQL)
+- Responsive design
 
-### ✅ Sistema de Autenticación
-- Login/Register con validación
-- JWT tokens con refresh
-- Persistencia de sesión
-- Protección de rutas
+### 📦 Product Management (Full CRUD)
+- Create, edit, delete products
+- Search with debounce (500ms)
+- Cross-field validation (selling price > purchase price)
+- Pagination
+- Relationships (categories, suppliers)
+- Computed fields (low stock, margin)
 
-### 📊 Dashboard Interactivo
-- KPIs en tiempo real (productos, clientes, órdenes, stock bajo)
-- Gráficos con Recharts (líneas y circulares)
-- Productos con stock crítico (GraphQL)
-- Diseño responsive
-
-### 📦 Gestión de Productos (CRUD Completo)
-- Crear, editar, eliminar productos
-- Búsqueda con debounce (500ms)
-- Validación cross-field (precio venta > compra)
-- Paginación
-- Relaciones (categorías, proveedores)
-- Campos calculados (stock bajo, margen)
-
-### 📱 Aplicación Móvil Nativa
+### 📱 Native Mobile Application
 - Login con JWT
-- Lista de productos con FlatList virtualizada
-- Búsqueda con debounce
+- Product list with virtualized FlatList
+- Search with debounce
 - Pull to refresh
-- Scroll infinito (paginación)
-- Persistencia con AsyncStorage
+- Infinite scroll (pagination)
+- Persistence with AsyncStorage
 
 ## 📸 Screenshots
 
 ### Web Dashboard
-![Web Dashboard](screenshots/web_dashboard1.png)
-![Web Dashboard Graficos](screenshots/web_dashboard2.png)
-
-### Web Products
-![Web Products](screenshots/web_products.png)
+![Web Login](screenshots/web/01-login.png)
+![Web Dashboard 1](screenshots/web/02-dashboard.png)
+![Web Dashboard 2](screenshots/web/03-dashboard.png)
+![Web Products List](screenshots/web/04-products-list.png)
+![Web Products Form](screenshots/web/05-products-form.png)
+![Web Products Form](screenshots/web/06-products-form.png)
 
 ### Mobile App
-![Mobile App](screenshots/mobile_app.png)
+![Mobile Login](screenshots/mobile/01-login.png)
+![Mobile Products List](screenshots/mobile/02-products-list.png)
 
-## 🛠️ Instalación
+## 🛠️ Installation
 
 ### Backend
 ```bash
